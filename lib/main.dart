@@ -3,6 +3,7 @@ import 'package:flutter_application_1/ad_helper.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'ads_controller.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,12 +29,24 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
+    _loadRewardedScore();
     _createBannerAd();
     _createInterstitialAd();
     _createRewardedAd();
     myContr.loadAd();
     _createRewardedInterstitialAd();
+  }
+
+  _loadRewardedScore() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _rewardedScore = prefs.getInt('rewardedScore') ?? 0;
+    });
+  }
+
+  _saveRewardedScore(int score) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('rewardedScore', score);
   }
 
   void _createBannerAd() {
@@ -89,6 +102,7 @@ class _MyAppState extends State<MyApp> {
           FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
         ad.dispose();
         _createInterstitialAd();
+        _saveRewardedScore(_rewardedScore);
       }, onAdFailedToShowFullScreenContent: (ad, error) {
         ad.dispose();
         _createInterstitialAd();
@@ -105,33 +119,36 @@ class _MyAppState extends State<MyApp> {
       request: const AdRequest(),
       rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
         onAdLoaded: (ad) => setState(() => _rewardedInterstitialAd = ad),
-        onAdFailedToLoad: (error) => setState(() => _rewardedInterstitialAd = null),
+        onAdFailedToLoad: (error) =>
+            setState(() => _rewardedInterstitialAd = null),
       ),
     );
   }
 
   void _showRewardedInterstitialAd() {
-  if (_rewardedInterstitialAd != null) {
-    _rewardedInterstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdDismissedFullScreenContent: (ad) {
-        ad.dispose();
-        _createRewardedInterstitialAd();
-      },
-      onAdFailedToShowFullScreenContent: (ad, error) {
-        ad.dispose();
-        _createRewardedInterstitialAd();
-      },
-    );
-    _rewardedInterstitialAd!.show(
-      onUserEarnedReward: (ad, reward) {
-        setState(() {
-          _rewardedScore++;
-        });
-      },
-    );
-    _rewardedInterstitialAd = null;
+    if (_rewardedInterstitialAd != null) {
+      _rewardedInterstitialAd!.fullScreenContentCallback =
+          FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _createRewardedInterstitialAd();
+          _saveRewardedScore(_rewardedScore);
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _createRewardedInterstitialAd();
+        },
+      );
+      _rewardedInterstitialAd!.show(
+        onUserEarnedReward: (ad, reward) {
+          setState(() {
+            _rewardedScore++;
+          });
+        },
+      );
+      _rewardedInterstitialAd = null;
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -238,11 +255,3 @@ Container btnSection(IconData icon, String text) {
     ),
   ));
 }
-
-Widget textSection = Container(
-  padding: const EdgeInsets.all(32),
-  child: const Text(
-      'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
-      'but you aint have any money? you just ur score above 5 to go there '
-      'UR SCORE IS'),
-);
