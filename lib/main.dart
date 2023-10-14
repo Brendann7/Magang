@@ -22,6 +22,7 @@ class _MyAppState extends State<MyApp> {
   BannerAd? _banner;
   InterstitialAd? _interstitialAd;
   RewardedAd? _rewardedAd;
+  RewardedInterstitialAd? _rewardedInterstitialAd;
   int _rewardedScore = 0;
   var myContr = Get.put(MyController());
   @override
@@ -32,6 +33,7 @@ class _MyAppState extends State<MyApp> {
     _createInterstitialAd();
     _createRewardedAd();
     myContr.loadAd();
+    _createRewardedInterstitialAd();
   }
 
   void _createBannerAd() {
@@ -97,6 +99,40 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  void _createRewardedInterstitialAd() {
+    RewardedInterstitialAd.load(
+      adUnitId: AdHelper.rewardedInterstitialAdUnitId,
+      request: const AdRequest(),
+      rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
+        onAdLoaded: (ad) => setState(() => _rewardedInterstitialAd = ad),
+        onAdFailedToLoad: (error) => setState(() => _rewardedInterstitialAd = null),
+      ),
+    );
+  }
+
+  void _showRewardedInterstitialAd() {
+  if (_rewardedInterstitialAd != null) {
+    _rewardedInterstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (ad) {
+        ad.dispose();
+        _createRewardedInterstitialAd();
+      },
+      onAdFailedToShowFullScreenContent: (ad, error) {
+        ad.dispose();
+        _createRewardedInterstitialAd();
+      },
+    );
+    _rewardedInterstitialAd!.show(
+      onUserEarnedReward: (ad, reward) {
+        setState(() {
+          _rewardedScore++;
+        });
+      },
+    );
+    _rewardedInterstitialAd = null;
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -118,17 +154,23 @@ class _MyAppState extends State<MyApp> {
                 onPressed: _showInterstitialAd,
                 child: const Text("InterstitialAd")),
             ElevatedButton(
-                onPressed: _showRewardedAd, child: const Text('Get 1 free score')),
-            
+                onPressed: _showRewardedAd,
+                child: const Text('Get 1 free score rewarded')),
+            ElevatedButton(
+              onPressed: () {
+                _showRewardedInterstitialAd();
+              },
+              child: const Text('Get Rewarded Interstitial Ad'),
+            ),
             Obx(() => Container(
-                  child: myContr.isAdLoaded.value
-                      ? ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            maxHeight: 100,
-                            minHeight: 100,
-                          ),
-                          child: AdWidget(ad: myContr.nativeAd!))
-                      : const SizedBox())),
+                child: myContr.isAdLoaded.value
+                    ? ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxHeight: 100,
+                          minHeight: 100,
+                        ),
+                        child: AdWidget(ad: myContr.nativeAd!))
+                    : const SizedBox())),
           ]),
         ),
         bottomNavigationBar: _banner == null

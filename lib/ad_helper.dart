@@ -33,6 +33,16 @@ class AdHelper {
       throw UnsupportedError('Unsupported platform');
     }
   }
+
+  static String get rewardedInterstitialAdUnitId {
+    if (Platform.isAndroid) {
+      return 'ca-app-pub-3940256099942544/5354046379';
+    } else if (Platform.isIOS) {
+      return 'ca-app-pub-3940256099942544/6978759866';
+    } else {
+      throw UnsupportedError('Unsupported platform');
+    }
+  }
   
   static final BannerAdListener bannerListener = BannerAdListener(
     onAdLoaded: (ad) => debugPrint('Ad Loaded.'),
