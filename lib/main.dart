@@ -5,10 +5,30 @@ import 'ads_controller.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+AppOpenAd? openAd;
+
+Future<void> loadAd() async {
+  await AppOpenAd.load(
+    adUnitId: AdHelper.openAppAdUnitId, 
+    request: const AdRequest(), 
+    adLoadCallback: AppOpenAdLoadCallback(
+      onAdLoaded: (ad) {
+        print('ad is loaded');
+        openAd = ad;
+        openAd!.show();
+      }, 
+      onAdFailedToLoad: (error) {
+        print('ad failed to load $error');
+      }), orientation: AppOpenAd.orientationPortrait);
+}
+
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
 
+  await MobileAds.instance.initialize();
+
+  await loadAd();
   runApp(const MyApp());
 }
 
