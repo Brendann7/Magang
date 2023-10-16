@@ -7,18 +7,18 @@ class AdHelper {
 
   static String get bannerAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/6300978111';
+      return 'ca-app-pub-7218127940872558/4724777329';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/2934735716';
+      return 'ca-app-pub-7218127940872558/8277009528';
     } else {
       throw UnsupportedError('Unsupported platform');
     }
   }
   static String get interstitialAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/1033173712';
+      return 'ca-app-pub-7218127940872558/5443704889';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/4411468910';
+      return 'ca-app-pub-7218127940872558/6540383886';
     } else {
       throw UnsupportedError('Unsupported platform');
     }
@@ -26,9 +26,9 @@ class AdHelper {
 
   static String get rewardedAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/5224354917';
+      return 'ca-app-pub-7218127940872558/1316757610';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/1712485313';
+      return 'ca-app-pub-7218127940872558/2250603323';
     } else {
       throw UnsupportedError('Unsupported platform');
     }
@@ -36,9 +36,9 @@ class AdHelper {
 
   static String get rewardedInterstitialAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/5354046379';
+      return 'ca-app-pub-7218127940872558/1041463432';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/6978759866';
+      return 'ca-app-pub-7218127940872558/6760655988';
     } else {
       throw UnsupportedError('Unsupported platform');
     }
@@ -46,9 +46,9 @@ class AdHelper {
 
   static String get openAppAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/3419835294';
+      return 'ca-app-pub-7218127940872558/6693137569';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/5662855259';
+      return 'ca-app-pub-7218127940872558/8979593397';
     } else {
       throw UnsupportedError('Unsupported platform');
     }

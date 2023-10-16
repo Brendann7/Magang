@@ -1,5 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/ad_helper.dart';
+import 'package:iklanasi/ad_helper.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'ads_controller.dart';
 import 'package:get/get.dart';
@@ -79,13 +81,17 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _createInterstitialAd() {
-    InterstitialAd.load(
+  if (_interstitialAd == null) {
+    Timer(Duration(seconds: 30), () {
+      InterstitialAd.load(
       adUnitId: AdHelper.interstitialAdUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (ad) => _interstitialAd = ad,
           onAdFailedToLoad: (LoadAdError error) => _interstitialAd = null),
     );
+    });
+}
   }
 
   void _showInterstitialAd() {

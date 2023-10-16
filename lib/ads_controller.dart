@@ -4,7 +4,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 class MyController extends GetxController{
   NativeAd? nativeAd;
   RxBool isAdLoaded = false.obs;
-  final String adUnitId = "ca-app-pub-3940256099942544/2247696110";
+  final String adUnitId = "ca-app-pub-7218127940872558/6823600703";
 
   loadAd(){
     nativeAd = NativeAd(
